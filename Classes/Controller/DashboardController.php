@@ -53,23 +53,20 @@ class DashboardController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionContro
     /**
      * Default constructor.
      */
-    public function __construct()
-    {
-        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-            : TYPO3_branch;
-        if (version_compare($typo3Branch, '9.5', '>=')) {
-            $this->config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($this->extKey);
-        } else {
-            $config = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey];
-            $this->config = $config ? unserialize($config) : [];
-        }
+    public function __construct(
+        ExtensionConfiguration $extensionConfiguration
+    ) {
+        $this->config = $extensionConfiguration->get($this->extKey);
+
         $this->cloudflareService = GeneralUtility::makeInstance(\Causal\Cloudflare\Services\CloudflareService::class, $this->config);
 
         $domains = GeneralUtility::trimExplode(',', $this->config['domains'], true);
+
         $this->zones = [];
+
         foreach ($domains as $domain) {
             list($identifier, $zone) = explode('|', $domain);
+
             $this->zones[$identifier] = $zone;
         }
     }
