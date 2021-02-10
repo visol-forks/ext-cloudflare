@@ -16,6 +16,7 @@ namespace Causal\Cloudflare\Backend\ToolbarItems;
 
 use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -247,14 +248,14 @@ class CloudflareToolbarItem implements ToolbarItemInterface
      * @param ResponseInterface $response
      * @return void
      */
-    public function renderAjax(ServerRequestInterface $request, ResponseInterface $response)
+    public function renderAjax(ServerRequestInterface $request): Response
     {
         $menu = $this->getDropDown();
-        $response->getBody()->write(json_encode([
+
+        return new Response(json_encode([
             'success' => true,
             'html' => $menu,
         ]));
-        return $response;
     }
 
     /**
@@ -264,7 +265,7 @@ class CloudflareToolbarItem implements ToolbarItemInterface
      * @param ResponseInterface $response
      * @return void
      */
-    public function toggleDevelopmentMode(ServerRequestInterface $request, ResponseInterface $response)
+    public function toggleDevelopmentMode(ServerRequestInterface $request): Response
     {
         $zone = GeneralUtility::_GP('zone');
         $active = GeneralUtility::_GP('active');
@@ -277,8 +278,9 @@ class CloudflareToolbarItem implements ToolbarItemInterface
             // Nothing to do
         }
 
-        $response->getBody()->write(json_encode(['success' => $ret['success'] === true]));
-        return $response;
+        return new Response(json_encode([
+            'success' => $ret['success'] === true
+        ]));
     }
 
     /**
@@ -288,15 +290,13 @@ class CloudflareToolbarItem implements ToolbarItemInterface
      * @param ResponseInterface $response
      * @return void
      */
-    public function purge(ServerRequestInterface $request, ResponseInterface $response)
+    public function purge(ServerRequestInterface $request): Response
     {
         /** @var \Causal\Cloudflare\Hooks\TCEmain $tceMain */
         $tceMain = GeneralUtility::makeInstance(\Causal\Cloudflare\Hooks\TCEmain::class);
         $tceMain->clearCache();
 
-        $response->getBody()->write(json_encode(['success' => true]));
-
-        return $response;
+        return new Response(json_encode(['success' => true]));
     }
 
     /**********************
