@@ -72,7 +72,6 @@ class CloudflareService implements SingletonInterface
         $url = rtrim($this->apiEndpoint, '/') . '/' . ltrim($route, '/');
         $headers = [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . trim($this->config['apiKey']),
         ];
 
         if ($this->config['useBearerAuthentication']) {
