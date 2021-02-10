@@ -72,6 +72,7 @@ class CloudflareService implements SingletonInterface
         $url = rtrim($this->apiEndpoint, '/') . '/' . ltrim($route, '/');
         $headers = [
             'Content-Type: application/json',
+            'Authorization: Bearer ' . trim($this->config['apiKey']),
         ];
 
         if ($this->config['useBearerAuthentication']) {
@@ -83,6 +84,7 @@ class CloudflareService implements SingletonInterface
 
         if ($request === 'GET') {
             $data = $this->sendHttpRequest($request, $url, $headers, $parameters);
+
             if ($data['success'] && $data['result_info']['total_pages'] > 1) {
                 $accumulatedData = $data;
                 for ($i = $data['result_info']['page'] + 1; $i <= $data['result_info']['total_pages']; $i++) {
