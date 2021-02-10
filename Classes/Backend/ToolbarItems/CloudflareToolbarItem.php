@@ -54,15 +54,8 @@ class CloudflareToolbarItem implements ToolbarItemInterface
      */
     public function __construct()
     {
-        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-            : TYPO3_branch;
-        if (version_compare($typo3Branch, '9.5', '>=')) {
-            $this->config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($this->extKey);
-        } else {
-            $config = $GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey];
-            $this->config = $config ? unserialize($config) : [];
-        }
+        $this->config = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($this->extKey);
+
         $this->cloudflareService = GeneralUtility::makeInstance(\Causal\Cloudflare\Services\CloudflareService::class, $this->config);
         $this->getLanguageService()->includeLLFile('EXT:cloudflare/Resources/Private/Language/locallang.xlf');
         $pageRenderer = $this->getPageRenderer();
@@ -301,14 +294,8 @@ class CloudflareToolbarItem implements ToolbarItemInterface
         $tceMain = GeneralUtility::makeInstance(\Causal\Cloudflare\Hooks\TCEmain::class);
         $tceMain->clearCache();
 
-        $typo3Branch = class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)
-            ? (new \TYPO3\CMS\Core\Information\Typo3Version())->getBranch()
-            : TYPO3_branch;
-        if (version_compare($typo3Branch, '9.0', '<')) {
-            exit;
-        }
-
         $response->getBody()->write(json_encode(['success' => true]));
+
         return $response;
     }
 
