@@ -16,6 +16,7 @@ namespace Causal\Cloudflare\Backend\ToolbarItems;
 
 use TYPO3\CMS\Backend\Toolbar\ToolbarItemInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
+use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -252,10 +253,10 @@ class CloudflareToolbarItem implements ToolbarItemInterface
     {
         $menu = $this->getDropDown();
 
-        return new Response(json_encode([
+        return new JsonResponse([
             'success' => true,
             'html' => $menu,
-        ]));
+        ]);
     }
 
     /**
@@ -278,9 +279,9 @@ class CloudflareToolbarItem implements ToolbarItemInterface
             // Nothing to do
         }
 
-        return new Response(json_encode([
-            'success' => $ret['success'] === true
-        ]));
+        return new JsonResponse([
+            'success' => $ret['success'] === true,
+        ]);
     }
 
     /**
@@ -296,7 +297,7 @@ class CloudflareToolbarItem implements ToolbarItemInterface
         $tceMain = GeneralUtility::makeInstance(\Causal\Cloudflare\Hooks\TCEmain::class);
         $tceMain->clearCache();
 
-        return new Response(json_encode(['success' => true]));
+        return new JsonResponse(['success' => true]);
     }
 
     /**********************
