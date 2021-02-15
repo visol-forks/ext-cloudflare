@@ -48,7 +48,11 @@ class TYPO3backend implements \TYPO3\CMS\Backend\Toolbar\ClearCacheActionsHookIn
     public function manipulateCacheActions(&$cacheActions, &$optionValues)
     {
         $backendUser = $this->getBackendUser();
-        if ($backendUser->isAdmin() || $backendUser->getTSConfigVal('options.clearCache.all') || $backendUser->getTSConfigVal('options.clearCache.cloudflare')) {
+        if (
+            $backendUser->isAdmin()
+            || $backendUser->getTSConfig()['options.']['clearCache.']['all'] ?? null
+            || $backendUser->getTSConfig()['options.']['clearCache.']['cloudflare'] ?? null
+        ) {
             // Add new cache menu item
             $clearAll = array_shift($cacheActions);
             /** @var \TYPO3\CMS\Backend\Routing\UriBuilder $uriBuilder */
